@@ -14,8 +14,6 @@ import { createSpinner } from '../utils/spinner.js'
 import { getAgentsDir } from '../utils/lockfile.js'
 import { detectAgents } from '../utils/agent-detection.js'
 
-export { detectAgents }
-
 let createInterface = defaultCreateInterface
 
 export function setCreateInterface(fn) {
