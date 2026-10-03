@@ -1,13 +1,20 @@
 import assert from 'node:assert/strict'
-import { mkdirSync, rmSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, rmSync } from 'node:fs'
+import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
 import { detectAgents } from './agent-detection.js'
 
 test('detects an installed agent by its skills directory', (t) => {
-  const dir = join(process.env.HOME, '.agents', 'skills')
-  t.after(() => rmSync(dir, { recursive: true, force: true }))
-  mkdirSync(dir, { recursive: true })
+  const tempDir = mkdtempSync(join(tmpdir(), 'rolecraft-agent-detect-'))
+  const origHome = process.env.HOME
+  process.env.HOME = tempDir
+  t.after(() => {
+    process.env.HOME = origHome
+    rmSync(tempDir, { recursive: true, force: true })
+  })
+
+  mkdirSync(join(tempDir, '.agents', 'skills'), { recursive: true })
 
   const found = detectAgents()
   assert.ok(
